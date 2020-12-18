@@ -1,0 +1,18 @@
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "ulla Häyhä",
+    "number": "0800-123123"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+
+{
+    "name": "",
+    "number": ""
+}
