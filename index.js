@@ -1,8 +1,23 @@
+require('dotenv').config()
+
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
+const mongoose = require('mongoose')
 
+const url =
+  'mongodb+srv://fullstack:sekred@cluster0-ostce.mongodb.net/note-app?retryWrites=true'
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+ 
+})
+
+const Note = mongoose.model('Note', noteSchema)
 app.use(express.json());
 app.use(express.static("build"));
 app.use(
@@ -17,23 +32,6 @@ morgan.token("postData", function (req, res) {
   return JSON.stringify(req.body);
 });
 
-let persons = [
-  {
-    id: 1,
-    name: "Mariia Häyhä",
-    number: "0505590278",
-  },
-  {
-    id: 2,
-    name: "Jussi Häyhä",
-    number: "0451386776",
-  },
-  {
-    id: 3,
-    name: "Pullero Häyhä",
-    number: "0451386776",
-  },
-];
 
 app.get("/info", (req, res) => {
   const time = new Date();
