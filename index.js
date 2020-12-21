@@ -1,23 +1,12 @@
-require('dotenv').config()
+require("dotenv").config();
 
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
 const cors = require("cors");
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
+const Person = require("./models/person");
 
-const url =
-  'mongodb+srv://fullstack:sekred@cluster0-ostce.mongodb.net/note-app?retryWrites=true'
-
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
- 
-})
-
-const Note = mongoose.model('Note', noteSchema)
 app.use(express.json());
 app.use(express.static("build"));
 app.use(
@@ -26,12 +15,12 @@ app.use(
   )
 );
 
+
 app.use(cors());
 
 morgan.token("postData", function (req, res) {
   return JSON.stringify(req.body);
 });
-
 
 app.get("/info", (req, res) => {
   const time = new Date();
@@ -39,9 +28,11 @@ app.get("/info", (req, res) => {
   ${time}</p>`);
 });
 
-app.get("/api/persons", (req, res) => {
-  res.json(persons);
-});
+app.get('/api/persons', (request, response) => {
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
+})
 
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
@@ -92,15 +83,15 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  const person = {
-    name: body.name,
+  const person = new Person({
+    name: body.content,
     number: body.number,
     id: generateId(),
-  };
+  })
 
-  persons = persons.concat(person);
-
-  response.json(person);
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 });
 
 const PORT = process.env.PORT || 3001;
